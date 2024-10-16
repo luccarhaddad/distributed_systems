@@ -20,8 +20,8 @@ var (
 
 	// Network settings
 	addr   = flag.String("addr", "localhost", "IP address to listen on")
-	port   = flag.Int("port", 5000, "TCP port to listen on")
-	master = flag.String("master", "localhost:5000", "Master address")
+	port   = flag.Int("port", 8000, "TCP port to listen on")
+	master = flag.String("master", "localhost:8000", "Master address")
 
 	// Induced failure on Worker
 	nOps = flag.Int("fail", 0, "Number of operations to run before failure")
