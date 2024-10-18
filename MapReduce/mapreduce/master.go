@@ -30,7 +30,11 @@ type Master struct {
 	failedWorkerChan chan *RemoteWorker
 
 	// Fault Tolerance
-	failedOperationChan chan *Operation
+	failedOperationsMutex sync.Mutex
+	failedOperations      map[int]*Operation
+
+	successfulOperationsMutex sync.Mutex
+	successfulOperations      map[int]*Operation
 }
 
 type Operation struct {
@@ -46,7 +50,8 @@ func newMaster(address string) (master *Master) {
 	master.workers = make(map[int]*RemoteWorker, 0)
 	master.idleWorkerChan = make(chan *RemoteWorker, IDLE_WORKER_BUFFER)
 	master.failedWorkerChan = make(chan *RemoteWorker, IDLE_WORKER_BUFFER)
-	master.failedOperationChan = make(chan *Operation, RETRY_OPERATION_BUFFER)
+	master.successfulOperations = make(map[int]*Operation)
+	master.failedOperations = make(map[int]*Operation, RETRY_OPERATION_BUFFER)
 	master.totalWorkers = 0
 	return
 }
@@ -89,4 +94,11 @@ func (master *Master) handleConnection(conn *net.Conn) error {
 	master.rpcServer.ServeConn(*conn)
 	(*conn).Close()
 	return nil
+}
+
+func (master *Master) isOperationSuccessful(id int) bool {
+	master.successfulOperationsMutex.Lock()
+	defer master.successfulOperationsMutex.Unlock()
+	_, exists := master.successfulOperations[id]
+	return exists
 }
