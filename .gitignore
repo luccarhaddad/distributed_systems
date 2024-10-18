@@ -1,0 +1,7 @@
+.idea/
+MapReduce/wordcount/map/
+MapReduce/wordcount/reduce/
+MapReduce/wordcount/result/
+MapReduce/wordcount/wordcount
+MapReduce/.DS_Store
+.DS_Store
